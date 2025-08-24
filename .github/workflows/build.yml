@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # 第一步：获取代码
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -23,18 +23,23 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # 使用稳定版Flutter，可根据项目需要改为stable或特定版本
+          channel: 'stable'
 
+      # 从这一步开始，所有操作都在 'simple_live_app' 目录下进行
       - name: Install Dependencies
         run: flutter pub get
+        working-directory: simple_live_app # <-- 核心修改
 
       - name: Run Tests (Optional)
         run: flutter test
+        working-directory: simple_live_app # <-- 核心修改
 
       - name: Build APK
         run: flutter build apk --release
+        working-directory: simple_live_app # <-- 核心修改
 
+      # 上传生成的APK文件。注意路径前缀也变成了 'simple_live_app/'
       - uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: build/app/outputs/flutter-apk/*.apk
+          path: simple_live_app/build/app/outputs/flutter-apk/*.apk # <-- 核心修改
